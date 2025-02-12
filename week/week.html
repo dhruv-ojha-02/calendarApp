@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div id="week-calendar">
+        <div id="week-header">
+            <button id="prev" class="nav-button">
+                <img src="../images/arrow-ios-back-svgrepo-com.svg" alt="Previous">
+            </button>
+            <div id="weekTitleContainer">
+                <h2 id="weekTitleElement"></h2>
+            </div>
+                <button id="next" class="nav-button">
+                <img src="../images/arrow-ios-forward.svg" alt="Next">
+            </button>
+        </div>
+        <select id="view">
+            <option value = "month">Month</option>
+            <option value = "week">Week</option>
+            <option value = "day">Day</option>
+        </select>
+        <div id="weekdays" class="weekdays"></div>
+        <div id="weekSlots" class="weekSlots"></div>
+    </div>
+    <div id="addEventModal">
+        <div id="eventModalContainer">
+            <form id="eventForm">
+                <h3>Enter event details</h3>
+                <label for="eventTitle">Title</label>
+                <input id="eventTitle" type="text" placeholder="Event Title" required  />
+                <label for="eventTime">Start Time</label>
+                <input id="eventTime" type="time" placeholder="Start Time" required />
+                <label for="eventEndTime">End Time</label>
+                <input id="eventEndTime" type="time" placeholder="End Time" required />
+                <label for="eventAttendees">Attendees</label>
+                <input id="eventAttendees" type="text" placeholder="Add Attendees" required />
+                <div id="eventButtons">
+                    <button id="save" type="submit">Save</button>
+                    <button id="cancel" type="button">Cancel</button>
+                </div>
+            </form>   
+        </div>
+    </div>
+    <div id="eventDetailsModal">
+        <div id="eventDetailsModalContainer">
+            <h3 >Event Details</h3>
+            <label id="titleDetail">Title</label>
+            <label id="timeDetail">Start Time</label>
+            <label id="endTimeDetail">End Time</label>
+            <label id="attendeesDetail">Attendees</label>            
+            <div id="eventDetailsButtons">
+                <button id="delete">Delete</button>
+                <button id="edit">Edit</button>
+                <button id="close">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="./weekView.js"></script>
+</body>
+</html>
+
+
