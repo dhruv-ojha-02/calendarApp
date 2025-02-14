@@ -2,54 +2,37 @@ let currMonth = new Date().getMonth();
 let currYear = new Date().getFullYear();
 let monthYearElement = document.getElementById("month-year");
 let datesContainer = document.getElementById("dates");
-let events = localStorage.getItem("events")
-  ? JSON.parse(localStorage.getItem("events"))
-  : [];
-const addEventModal = document.getElementById("addEventModal");
-const eventDetailsModalContainer = document.getElementById(
-  "eventDetailsModalContainer"
-);
-const eventForm = document.getElementById("eventForm");
-const eventDetailsForm = document.getElementById("eventDetailsModal");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
-const saveButton = document.getElementById("save");
-const editButton = document.getElementById("edit");
-const cancelButton = document.getElementById("cancel");
-const closeButton = document.getElementById("close");
-const deleteButton = document.getElementById("delete");
-const viewButton = document.getElementById("view");
+
+import {
+  events,
+  addEventModal,
+  eventDetailsModal,
+  eventForm,
+  prevButton,
+  nextButton,
+  editButton,
+  cancelButton,
+  closeButton,
+  deleteButton,
+  viewButton,
+  updateCalendarView,
+} from "../config.js";
 
 viewButton.value = "month";
 
-function updateCalendarView() {
-  let view = viewButton.value;
-  if (view === "month") {
-    window.location.href = "/month/month.html";
-  } else if (view === "week") {
-    window.location.href = "/week/week.html";
-  } else if (view === "day") {
-    window.location.href = "/day/day.html";
-  }
-}
-
+// Opens the event modal to add event
 function handleOpenEventModal(eventId) {
-  // eventForm.onsubmit = (evt) => {
-  //   evt.preventDefault();
-  //   handleSave(evt, eventId);
-  // };
-
   cancelButton.onclick = () => {
     handleClose();
   };
   addEventModal.style.display = "flex";
-
   eventForm.onsubmit = (evt) => {
     evt.preventDefault();
     handleSave(evt, eventId);
   };
 }
 
+// Save the user's event to local storage
 function handleSave(evt, eventId) {
   evt.preventDefault();
 
@@ -84,6 +67,7 @@ function handleSave(evt, eventId) {
   }
 }
 
+// Displays the existing event's details
 function displayEventDetails(evtIdx, evt) {
   eventDetailsModal.style.display = "flex";
   closeButton.onclick = () => {
@@ -95,12 +79,6 @@ function displayEventDetails(evtIdx, evt) {
   deleteButton.addEventListener("click", () => {
     handleDelete(evtIdx, evt);
   });
-  // editButton.onclick = () => {
-  //   handleEdit(evtIdx, evt);
-  // };
-  // deleteButton.onclick = () => {
-  //   handleDelete(evtIdx, evt);
-  // };
   const titleDetail = document.getElementById("titleDetail");
   const timeDetail = document.getElementById("timeDetail");
   const endTimeDetail = document.getElementById("endTimeDetail");
@@ -112,9 +90,9 @@ function displayEventDetails(evtIdx, evt) {
   attendeesDetail.textContent = `Attendees: ${evt.attendees}`;
 }
 
+// Edits the existing event
 function handleEdit(evtIdx, evt) {
   let eventToEdit = events.find((event) => event.id === evtIdx);
-
   if (eventToEdit) {
     document.getElementById("eventTitle").value = eventToEdit.title;
     document.getElementById("eventTime").value = eventToEdit.startTime;
@@ -135,6 +113,7 @@ function handleEdit(evtIdx, evt) {
   }
 }
 
+// Deletes the existing event
 function handleDelete(evtIdx, evt) {
   let index = events.findIndex((event) => event.id === evtIdx);
   if (index !== -1) {
@@ -144,6 +123,7 @@ function handleDelete(evtIdx, evt) {
   }
 }
 
+// Closes the event Modal
 function handleClose() {
   addEventModal.style.display = "none";
   eventDetailsModal.style.display = "none";
@@ -156,6 +136,27 @@ function handleClose() {
   renderCalendar(currMonth, currYear);
 }
 
+// Render the previous month in the Calendar
+function handlePrevMonth() {
+  currMonth--;
+  if (currMonth < 0) {
+    currMonth = 11;
+    currYear--;
+  }
+  renderCalendar(currMonth, currYear);
+}
+
+// Render the next month in the Calendar
+function handleNextMonth() {
+  currMonth++;
+  if (currMonth > 11) {
+    currMonth = 0;
+    currYear++;
+  }
+  renderCalendar(currMonth, currYear);
+}
+
+// Displays the existing events in the corresponding Calendar view
 function renderEvents() {
   events.forEach((evt) => {
     let eventDiv = document.createElement("div");
@@ -178,31 +179,13 @@ function renderEvents() {
   });
 }
 
-function handlePrevMonth() {
-  currMonth--;
-  if (currMonth < 0) {
-    currMonth = 11;
-    currYear--;
-  }
-  renderCalendar(currMonth, currYear);
-}
-
-function handleNextMonth() {
-  currMonth++;
-  if (currMonth > 11) {
-    currMonth = 0;
-    currYear++;
-  }
-  renderCalendar(currMonth, currYear);
-}
-
+// Populates the calendar grid with empty cells for the given month
 function populateCalendar(firstDayInMonth, totalDaysInMonths, month, year) {
   for (let i = 0; i < firstDayInMonth; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.classList.add("emptyCell");
     datesContainer.appendChild(emptyCell);
   }
-
   for (let i = 1; i <= totalDaysInMonths; i++) {
     const dateCell = document.createElement("div");
     dateCell.classList.add("dateCell");
@@ -214,6 +197,7 @@ function populateCalendar(firstDayInMonth, totalDaysInMonths, month, year) {
     eventsContainer.setAttribute("date", `${i}/${month + 1}/${year}`);
     dateCell.appendChild(dateText);
     dateCell.appendChild(eventsContainer);
+    // Highlights the current date
     if (
       i === new Date().getDate() &&
       month === new Date().getMonth() &&
@@ -230,6 +214,7 @@ function populateCalendar(firstDayInMonth, totalDaysInMonths, month, year) {
   renderEvents();
 }
 
+// Generates the calendar layout for the given month and year
 function renderCalendar(month, year) {
   let totalDaysInMonths = new Date(year, month + 1, 0).getDate();
   let firstDayInMonth = new Date(year, month, 1).getDay();
@@ -243,7 +228,10 @@ function renderCalendar(month, year) {
   populateCalendar(firstDayInMonth, totalDaysInMonths, month, year);
 }
 
+// Adding event listener
 prevButton.addEventListener("click", handlePrevMonth);
 nextButton.addEventListener("click", handleNextMonth);
 viewButton.addEventListener("change", updateCalendarView);
+
+// Generates the initial calendar for the current month and year
 renderCalendar(currMonth, currYear);

@@ -1,43 +1,35 @@
 let weekTitleElement = document.getElementById("weekTitleElement");
 let weekdaysContainer = document.getElementById("weekdays");
 let slotsContainer = document.getElementById("weekSlots");
-let events = localStorage.getItem("events")
-  ? JSON.parse(localStorage.getItem("events"))
-  : [];
-const addEventModal = document.getElementById("addEventModal");
-const eventDetailsModal = document.getElementById("eventDetailsModal");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
-const editButton = document.getElementById("edit");
-const saveButton = document.getElementById("save");
-const cancelButton = document.getElementById("cancel");
-const closeButton = document.getElementById("close");
-const deleteButton = document.getElementById("delete");
-const viewButton = document.getElementById("view");
+
+import {
+  events,
+  addEventModal,
+  eventDetailsModal,
+  eventForm,
+  prevButton,
+  nextButton,
+  editButton,
+  cancelButton,
+  closeButton,
+  deleteButton,
+  viewButton,
+  updateCalendarView,
+} from "../config.js";
+
 viewButton.value = "week";
 
-let currWeekStart = getWeekStart(new Date());
-
+// Gets the first day of the week
 function getWeekStart(date) {
   const dayInWeek = date.getDay();
   const difference = date.getDate() - dayInWeek;
   return new Date(date.getFullYear(), date.getMonth(), difference);
 }
 
-function updateCalendarView() {
-  let view = viewButton.value;
-  if (view === "month") {
-    window.location.href = "/month/month.html";
-  } else if (view === "week") {
-    window.location.href = "/week/week.html";
-  } else if (view === "day") {
-    window.location.href = "/day/day.html";
-  }
-}
+let currWeekStart = getWeekStart(new Date());
 
+// Opens the event modal to add event
 function handleOpenEventModal(slotTime, eventId) {
-  console.log(eventId);
-
   cancelButton.onclick = () => {
     handleClose();
   };
@@ -45,13 +37,13 @@ function handleOpenEventModal(slotTime, eventId) {
   document.getElementById("eventTime").value = formattedTime;
 
   addEventModal.style.display = "flex";
-
   eventForm.onsubmit = (evt) => {
     evt.preventDefault();
     handleSave(evt, slotTime, eventId);
   };
 }
 
+// Save the user's event to local storage
 function handleSave(evt, slotTime, eventId) {
   evt.preventDefault();
 
@@ -86,6 +78,7 @@ function handleSave(evt, slotTime, eventId) {
   }
 }
 
+// Displays the existing event's details
 function displayEventDetails(evtIdx, evt) {
   eventDetailsModal.style.display = "flex";
   closeButton.onclick = () => {
@@ -108,7 +101,7 @@ function displayEventDetails(evtIdx, evt) {
   endTimeDetail.textContent = `End Time: ${evt.endTime}`;
   attendeesDetail.textContent = `Attendees: ${evt.attendees}`;
 }
-
+// Edits the existing event
 function handleEdit(evtIdx, evt) {
   let eventToEdit = events.find((event) => event.id === evtIdx);
 
@@ -132,6 +125,7 @@ function handleEdit(evtIdx, evt) {
   }
 }
 
+// Deletes the existing event
 function handleDelete(evtIdx, evt) {
   let index = events.findIndex((event) => event.id === evtIdx);
   if (index !== -1) {
@@ -141,6 +135,7 @@ function handleDelete(evtIdx, evt) {
   }
 }
 
+// Closes the event Modal
 function handleClose() {
   addEventModal.style.display = "none";
   eventDetailsModal.style.display = "none";
@@ -153,16 +148,169 @@ function handleClose() {
   renderCalendar(currWeekStart);
 }
 
+// Renders the next week in the Calendar
 function handleNextWeek() {
   currWeekStart.setDate(currWeekStart.getDate() + 7);
   renderCalendar(new Date(currWeekStart));
 }
 
+// Renders the previous week in the Calendar
 function handlePrevWeek() {
   currWeekStart.setDate(currWeekStart.getDate() - 7);
   renderCalendar(new Date(currWeekStart));
 }
 
+// Displays the existing events in the corresponding Calendar view
+// function renderEvents(weekStart) {
+//   let weeklyEvents = events.filter((evt) => {
+//     let [day, month, year] = evt.eventDate.split("/").map(Number);
+//     let evtDateObj = new Date(year, month - 1, day);
+//     return (
+//       evtDateObj >= weekStart &&
+//       evtDateObj <= new Date(weekStart.getTime() + 6 * 86400000)
+//     );
+//   });
+
+//   // track positions for overlapping events
+//   let eventPositions = {};
+
+//   weeklyEvents.forEach((evt) => {
+//     const [startHour, startMinute] = evt.startTime.split(":").map(Number);
+//     const [endHour, endMinute] = evt.endTime.split(":").map(Number);
+//     let evtDateStr = evt.eventDate.trim();
+
+//     // Calculate total event duration
+//     let eventDurationMinutes =
+//       (endHour - startHour) * 60 + (endMinute - startMinute);
+
+//     // Calculate height of the event block (each hour 45px)
+//     let height = (eventDurationMinutes / 60) * 45;
+//     let topOffset = (startMinute / 60) * 45;
+
+//     // Handling Overlapping Events
+//     // unique key to track overlapping events based on start hour and same date
+//     let eventKey = `${startHour}_${evtDateStr}`;
+
+//     if (!eventPositions[eventKey]) {
+//       eventPositions[eventKey] = [];
+//     }
+
+//     let eventIndex = eventPositions[eventKey].length;
+//     eventPositions[eventKey].push(evt);
+//     let eventWidth = 95 / eventPositions[eventKey].length; //95% width is alloted
+//     let leftOffset = eventIndex * eventWidth;
+
+//     // Finding the particular childslot for an event
+//     let targetSlot = document.querySelector(
+//       `.childSlot[hour='${
+//         startHour < 10 ? "0" : ""
+//       }${startHour}'][date='${evtDateStr}']`
+//     );
+
+//     if (targetSlot) {
+//       const eventContainer = targetSlot.querySelector(".weekEventsContainer");
+//       if (eventContainer) {
+//         const eventDiv = document.createElement("div");
+//         eventDiv.classList.add("eventDivWeekView");
+//         eventDiv.textContent = `Title: ${evt.title}\nAttendees: ${evt.attendees}`;
+//         eventDiv.style.top = `${topOffset}px`;
+//         eventDiv.style.height = `${height}px`;
+//         eventDiv.style.width = `${eventWidth}%`;
+//         eventDiv.style.left = `${leftOffset}%`;
+
+//         // adding event listener for the event
+//         eventDiv.addEventListener("click", () => {
+//           displayEventDetails(evt.id, evt);
+//         });
+//         eventContainer.appendChild(eventDiv);
+//       }
+//     }
+//   });
+// }
+
+// Filters events to get only those in the current week
+function getWeeklyEvents(weekStart) {
+  return events.filter((evt) => {
+    let [day, month, year] = evt.eventDate.split("/").map(Number);
+    let evtDateObj = new Date(year, month - 1, day);
+    return (
+      evtDateObj >= weekStart &&
+      evtDateObj <= new Date(weekStart.getTime() + 6 * 86400000)
+    );
+  });
+}
+
+// Calculates the dimensions and position for an event, handling overlaps
+function getEventStyle(evt, eventPositions) {
+  const [startHour, startMinute] = evt.startTime.split(":").map(Number);
+  const [endHour, endMinute] = evt.endTime.split(":").map(Number);
+  let evtDateStr = evt.eventDate.trim();
+
+  // Calculate event duration in minutes
+  let eventDurationMinutes =
+    (endHour - startHour) * 60 + (endMinute - startMinute);
+
+  // Determine height (45px represents one hour)
+  let height = (eventDurationMinutes / 60) * 45;
+  let topOffset = (startMinute / 60) * 45;
+
+  // Handle overlapping events based on startHour and date
+  let eventKey = `${startHour}_${evtDateStr}`;
+  if (!eventPositions[eventKey]) {
+    eventPositions[eventKey] = [];
+  }
+  let eventIndex = eventPositions[eventKey].length;
+  eventPositions[eventKey].push(evt);
+  let eventWidth = 95 / eventPositions[eventKey].length; // using 95% of available width
+  let leftOffset = eventIndex * eventWidth;
+
+  return { startHour, topOffset, height, eventWidth, leftOffset, evtDateStr };
+}
+
+// Renders a single event div in the correct slot based on computed styles
+function renderEvent(evt, styleProps) {
+  const { startHour, topOffset, height, eventWidth, leftOffset, evtDateStr } =
+    styleProps;
+
+  // Find the specific child slot using hour and date
+  let targetSlot = document.querySelector(
+    `.childSlot[hour='${
+      startHour < 10 ? "0" : ""
+    }${startHour}'][date='${evtDateStr}']`
+  );
+  if (targetSlot) {
+    const eventContainer = targetSlot.querySelector(".weekEventsContainer");
+    if (eventContainer) {
+      const eventDiv = document.createElement("div");
+      eventDiv.classList.add("eventDivWeekView");
+      eventDiv.textContent = `Title: ${evt.title}\nAttendees: ${evt.attendees}`;
+      eventDiv.style.top = `${topOffset}px`;
+      eventDiv.style.height = `${height}px`;
+      eventDiv.style.width = `${eventWidth}%`;
+      eventDiv.style.left = `${leftOffset}%`;
+
+      // adding event listener for each event
+      eventDiv.addEventListener("click", () => {
+        displayEventDetails(evt.id, evt);
+      });
+
+      eventContainer.appendChild(eventDiv);
+    }
+  }
+}
+
+// Displays the existing events in the corresponding Calendar view
+function renderEvents(weekStart) {
+  let weeklyEvents = getWeeklyEvents(weekStart);
+  let eventPositions = {}; // Object to track overlapping events
+
+  weeklyEvents.forEach((evt) => {
+    const styleProps = getEventStyle(evt, eventPositions);
+    renderEvent(evt, styleProps);
+  });
+}
+
+// Populates the calendar grid with empty cells for the given week
 function populateCalendar(weekStart) {
   slotsContainer.innerHTML = "";
 
@@ -207,76 +355,7 @@ function populateCalendar(weekStart) {
   renderEvents(weekStart);
 }
 
-function renderEvents(weekStart) {
-  let weeklyEvents = events.filter((evt) => {
-    let [day, month, year] = evt.eventDate.split("/").map(Number);
-    let evtDateObj = new Date(year, month - 1, day);
-    return (
-      evtDateObj >= weekStart &&
-      evtDateObj <= new Date(weekStart.getTime() + 6 * 86400000)
-    );
-  });
-
-  let eventPositions = {};
-
-  weeklyEvents.forEach((evt) => {
-    const [startHour, startMinute] = evt.startTime.split(":").map(Number);
-    const [endHour, endMinute] = evt.endTime.split(":").map(Number);
-
-    let [day, month, year] = evt.eventDate.split("/").map(Number);
-    let evtDateObj = new Date(year, month - 1, day);
-    let evtDateStr = `${evtDateObj.getDate()}/${
-      evtDateObj.getMonth() + 1
-    }/${evtDateObj.getFullYear()}`;
-
-    let eventDurationMinutes =
-      (endHour - startHour) * 60 + (endMinute - startMinute);
-
-    let height = (eventDurationMinutes / 60) * 45;
-    let topOffset = (startMinute / 60) * 45;
-
-    let eventKey = `${startHour}_${evtDateStr}`;
-    if (!eventPositions[eventKey]) {
-      eventPositions[eventKey] = [];
-    }
-    let eventIndex = eventPositions[eventKey].length;
-    eventPositions[eventKey].push(evt);
-
-    let eventWidth = 95 / eventPositions[eventKey].length;
-    let leftOffset = eventIndex * eventWidth;
-
-    console.log(
-      `Rendering Event: ${evt.title}, Date: ${evtDateStr}, Start: ${startHour}:${startMinute}, Duration: ${eventDurationMinutes} min, Position: ${eventIndex}`
-    );
-
-    let targetSlot = document.querySelector(
-      `.childSlot[hour='${
-        startHour < 10 ? "0" : ""
-      }${startHour}'][date='${evtDateStr}']`
-    );
-
-    if (targetSlot) {
-      const eventContainer = targetSlot.querySelector(".weekEventsContainer");
-
-      if (eventContainer) {
-        const eventDiv = document.createElement("div");
-        eventDiv.classList.add("eventDivWeekView");
-        eventDiv.textContent = `Title: ${evt.title}\nAttendees: ${evt.attendees}`;
-        eventDiv.style.top = `${topOffset}px`;
-        eventDiv.style.height = `${height}px`;
-        eventDiv.style.width = `${eventWidth}%`;
-        eventDiv.style.left = `${leftOffset}%`;
-
-        eventDiv.addEventListener("click", () => {
-          displayEventDetails(evt.id, evt);
-        });
-
-        eventContainer.appendChild(eventDiv);
-      }
-    }
-  });
-}
-
+// Generates the calendar layout for the given week
 function renderCalendar(weekStart) {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
@@ -319,7 +398,11 @@ function renderCalendar(weekStart) {
 
   populateCalendar(weekStart);
 }
+
+// Adding event listeners
 prevButton.addEventListener("click", handlePrevWeek);
 nextButton.addEventListener("click", handleNextWeek);
 viewButton.addEventListener("change", updateCalendarView);
+
+// Generates the initial calendar for the current month and year
 renderCalendar(currWeekStart);

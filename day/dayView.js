@@ -1,39 +1,30 @@
 let dateTitleElement = document.getElementById("dateTitleElement");
 let slotsContainer = document.getElementById("slots");
-let events = localStorage.getItem("events")
-  ? JSON.parse(localStorage.getItem("events"))
-  : [];
-const addEventModal = document.getElementById("addEventModal");
-const eventDetailsModal = document.getElementById("eventDetailsModal");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
-const saveButton = document.getElementById("save");
-const editButton = document.getElementById("edit");
-const eventForm = document.getElementById("eventForm");
-const cancelButton = document.getElementById("cancel");
-const closeButton = document.getElementById("close");
-const deleteButton = document.getElementById("delete");
-const viewButton = document.getElementById("view");
+
+import {
+  events,
+  addEventModal,
+  eventDetailsModal,
+  eventForm,
+  prevButton,
+  nextButton,
+  editButton,
+  cancelButton,
+  closeButton,
+  deleteButton,
+  viewButton,
+  updateCalendarView,
+} from "../config.js";
+
 viewButton.value = "day";
 
+// Gets the current date, month and year
 let currDate = new Date().getDate();
 let currMonth = new Date().getMonth();
 let currYear = new Date().getFullYear();
 
-function updateCalendarView() {
-  let view = viewButton.value;
-  if (view === "month") {
-    window.location.href = "/month/month.html";
-  } else if (view === "week") {
-    window.location.href = "/week/week.html";
-  } else if (view === "day") {
-    window.location.href = "/day/day.html";
-  }
-}
-
+// Opens the event modal to add event
 function handleOpenEventModal(slotTime, eventId) {
-  console.log(eventId);
-
   cancelButton.onclick = () => {
     handleClose();
   };
@@ -48,6 +39,7 @@ function handleOpenEventModal(slotTime, eventId) {
   };
 }
 
+// Displays the existing event's details
 function displayEventDetails(evtIdx, evt) {
   eventDetailsModal.style.display = "flex";
   closeButton.onclick = () => {
@@ -71,6 +63,7 @@ function displayEventDetails(evtIdx, evt) {
   attendeesDetail.textContent = `Attendees: ${evt.attendees}`;
 }
 
+// Save the user's event to local storage
 function handleSave(evt, slotTime, eventId) {
   evt.preventDefault();
 
@@ -105,6 +98,7 @@ function handleSave(evt, slotTime, eventId) {
   }
 }
 
+// Edits the existing event
 function handleEdit(evtIdx, evt) {
   let eventToEdit = events.find((event) => event.id === evtIdx);
 
@@ -128,6 +122,7 @@ function handleEdit(evtIdx, evt) {
   }
 }
 
+// Deletes the existing event
 function handleDelete(evtIdx, evt) {
   let index = events.findIndex((event) => event.id === evtIdx);
   if (index !== -1) {
@@ -137,6 +132,7 @@ function handleDelete(evtIdx, evt) {
   }
 }
 
+// Closes the event Modal
 function handleClose() {
   addEventModal.style.display = "none";
   eventDetailsModal.style.display = "none";
@@ -149,6 +145,7 @@ function handleClose() {
   renderCalendar(currDate, currMonth, currYear);
 }
 
+// Renders the next day in the Calendar
 function handleNextDay() {
   let currentDateObj = new Date(currYear, currMonth, currDate);
   currentDateObj.setDate(currentDateObj.getDate() + 1);
@@ -160,6 +157,7 @@ function handleNextDay() {
   renderCalendar(currDate, currMonth, currYear);
 }
 
+// Renders the previous day in the Calendar
 function handlePrevDay() {
   let currentDateObj = new Date(currYear, currMonth, currDate);
   currentDateObj.setDate(currentDateObj.getDate() - 1);
@@ -171,6 +169,31 @@ function handlePrevDay() {
   renderCalendar(currDate, currMonth, currYear);
 }
 
+// Displays the existing events in the corresponding Calendar view
+function renderEvents(date, month, year) {
+  let currentDateStr = `${date}/${month + 1}/${year}`;
+  let todaysEvents = events.filter((evt) => evt.eventDate === currentDateStr);
+  todaysEvents.forEach((evt) => {
+    const [hourStr, minuteStr] = evt.startTime.split(":");
+    const hour = parseInt(hourStr);
+    const paddedHour = hour < 10 ? `0${hour}` : `${hour}`;
+
+    const eventContainer = document.querySelector(
+      `.dayEventsContainer[hour='${paddedHour}']`
+    );
+    if (eventContainer) {
+      const eventDiv = document.createElement("div");
+      eventDiv.classList.add("eventDivDayView");
+      eventDiv.textContent = `Title: ${evt.title}\nAttendees: ${evt.attendees}`;
+      eventDiv.addEventListener("click", () => {
+        displayEventDetails(evt.id, evt);
+      });
+      eventContainer.appendChild(eventDiv);
+    }
+  });
+}
+
+// Populates the calendar grid with empty cells for the given day
 function populateCalendar(date, month, year) {
   for (let i = 0; i < 24; i++) {
     const slotCellContainer = document.createElement("div");
@@ -199,29 +222,7 @@ function populateCalendar(date, month, year) {
   renderEvents(date, month, year);
 }
 
-function renderEvents(date, month, year) {
-  let currentDateStr = `${date}/${month + 1}/${year}`;
-  let todaysEvents = events.filter((evt) => evt.eventDate === currentDateStr);
-  todaysEvents.forEach((evt) => {
-    const [hourStr, minuteStr] = evt.startTime.split(":");
-    const hour = parseInt(hourStr);
-    const paddedHour = hour < 10 ? `0${hour}` : `${hour}`;
-
-    const eventContainer = document.querySelector(
-      `.dayEventsContainer[hour='${paddedHour}']`
-    );
-    if (eventContainer) {
-      const eventDiv = document.createElement("div");
-      eventDiv.classList.add("eventDivDayView");
-      eventDiv.textContent = `Title: ${evt.title}\nAttendees: ${evt.attendees}`;
-      eventDiv.addEventListener("click", () => {
-        displayEventDetails(evt.id, evt);
-      });
-      eventContainer.appendChild(eventDiv);
-    }
-  });
-}
-
+// Generates the calendar layout for the given day
 function renderCalendar(date, month, year) {
   dateTitleElement.innerText = new Date(year, month, date).toLocaleString(
     "en-us",
@@ -237,7 +238,10 @@ function renderCalendar(date, month, year) {
   populateCalendar(date, month, year);
 }
 
+// Adding event listeners
 prevButton.addEventListener("click", handlePrevDay);
 nextButton.addEventListener("click", handleNextDay);
 viewButton.addEventListener("change", updateCalendarView);
+
+// Generates the initial calendar for the current month and year
 renderCalendar(currDate, currMonth, currYear);
