@@ -23,7 +23,6 @@ let currYear = new Date().getFullYear();
 function updateCalendarView() {
   let view = viewButton.value;
   if (view === "month") {
-    // window.location.href = "month.html";
     window.location.href = "/month/month.html";
   } else if (view === "week") {
     window.location.href = "/week/week.html";

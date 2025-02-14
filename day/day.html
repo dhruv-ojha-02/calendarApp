@@ -27,7 +27,10 @@
     <div id="addEventModal">
         <div id="eventModalContainer">
             <form id="eventForm">
-                <h3>Enter event details</h3>
+                <div id="eventFormModalHeader">
+                    <h3>Enter event details</h3>
+                    <button id="cancel" type="button">X</button>
+                </div>
                 <label for="eventTitle">Title</label>
                 <input id="eventTitle" type="text" placeholder="Event Title" required  />
                 <label for="eventTime">Start Time</label>
@@ -38,22 +41,23 @@
                 <input id="eventAttendees" type="text" placeholder="Add Attendees" required />
                 <div id="eventButtons">
                     <button id="save" type="submit">Save</button>
-                    <button id="cancel" type="button">Cancel</button>
                 </div>
             </form>   
         </div>
     </div>
     <div id="eventDetailsModal">
         <div id="eventDetailsModalContainer">
-            <h3 >Event Details</h3>
+            <div id="eventDetailsModalHeader">
+                <h3 >Event Details</h3>
+                <button id="close">X</button>
+            </div>
             <label id="titleDetail">Title</label>
             <label id="timeDetail">Start Time</label>
             <label id="endTimeDetail">End Time</label>
             <label id="attendeesDetail">Attendees</label>            
             <div id="eventDetailsButtons">
-                <button id="delete">Delete</button>
                 <button id="edit">Edit</button>
-                <button id="close">Close</button>
+                <button id="delete">Delete</button>
             </div>
         </div>
     </div>

@@ -25,7 +25,6 @@ viewButton.value = "month";
 function updateCalendarView() {
   let view = viewButton.value;
   if (view === "month") {
-    // window.location.href = "month.html";
     window.location.href = "/month/month.html";
   } else if (view === "week") {
     window.location.href = "/week/week.html";
@@ -71,7 +70,6 @@ function handleSave(evt, eventId) {
   ) {
     let newEvent = {
       id: new Date().toLocaleString(),
-      // id: Date.now(),
       eventDate: eventId,
       startTime: eventTime,
       title: eventTitle,

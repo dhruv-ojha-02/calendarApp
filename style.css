@@ -119,11 +119,13 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
+  /* background-color: white; */
+  background-color: #f0f4fa;
   border-radius: 5px;
   flex-direction: column;
   width: 250px;
   height: 320px;
+  /* text-align: left; */
 }
 
 #eventForm{
@@ -146,12 +148,13 @@ body{
 #eventDetailsModalContainer label{
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
   flex-direction: column;
   width: 250px;
   height: 300px;
   font-family: Arial, sans-serif;
   gap: 35px;
+  margin-left: 50px;
 }
 
 #eventForm input{
@@ -170,6 +173,17 @@ body{
   margin-top: 2px;
   gap: 92px;
 }
+
+#eventDetailsModalHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+#eventFormModalHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
 #eventDetailsButtons{
   display: flex;
   align-items: center;
@@ -179,28 +193,60 @@ body{
   gap: 21px;
 }
 
-#save, #delete{
+#save{
   color: white;
   width:60px;
   height: 25px;
   background-color: #0c57d1;
   border-radius: 5px;
   cursor: pointer;
-  
+  height: 100%;
+  padding: 5px;
+  border-radius: 25px;
 }
-#cancel, #close{
-  color:white;
+
+#edit, #delete{
+  color: black;
   width:60px;
   height: 25px;
-  background-color: #ff2226;
+  background-color: #dfdfdf;
   border-radius: 5px;
   cursor: pointer;
+  height: 100%;
+  padding: 5px;
+  border-radius: 25px;
 }
-#save:hover,#delete:hover{
+
+#cancel{
+  color:black;
+  width:30px;
+  height: 30px;
+  background-color:#0a060601;
+  cursor: pointer;
+  border-radius: 50%;
+  position: relative;
+  left: 11%;
+  top: 0%;
+  border: none;
+}
+
+#close{
+  color:black;
+  width:30px;
+  height: 30px;
+  background-color:#0a060601;
+  cursor: pointer;
+  border-radius: 50%;
+  position: relative;
+  left: 37%;
+  top: 0%;
+  border: none;
+}
+#save:hover{
   background-color: #1a78c2;
 }
-#cancel:hover,#close:hover{
-  background-color: #fd5346;
+#cancel:hover,#close:hover,#edit:hover,#delete:hover{
+  background-color: rgb(188, 185, 185);
 }
 
 
@@ -289,32 +335,71 @@ body{
   border: none;
 }
 .dayEventsContainer{
-  width: 90%;
+  position: relative;
+  width: 95%;
   display: flex;
 }
 .weekEventsContainer{
-  width: 90%;
+  position: relative;
+  width: 95%;
   display: flex;
 }
 
 
-.eventDivDayView , .eventDivWeekView{
-  background-color: rgb(175, 218, 255);
-  /* background-color: #009ce5; */
+.eventDivDayView {
+  background-color:rgb(32, 138, 214);
   display: flex;
+  color: white;
   height: 45px;
   width: 100%;
   justify-content: center;
   align-items: center;
   font-size:x-small ;
-  /* margin: 1px; */
   padding: 2px;
-  white-space: pre-line; /*newline characters are rendered as line breaks */
+  white-space: pre-line;
   border: white solid 1px ;
   border-right: none;
   border-top: none;
   border-radius: 5px;
   cursor: pointer;
+  overflow: hidden;
+}
+
+/* .eventDivDayView {
+  background-color:rgb(32, 138, 214);
+  display: flex;
+
+
+  color: white;
+
+  justify-content: center;
+  align-items: center;
+  font-size: x-small;
+  padding: 2px;
+  white-space: pre-line;
+  border: white solid 1px;
+  border-radius: 5px;
+  cursor: pointer;
+  overflow: hidden;
+
+  position: absolute;
+} */
+
+.eventDivWeekView {
+  background-color:rgb(32, 138, 214);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: x-small;
+  border: white solid 1px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  padding: 3px;
+  overflow: hidden; 
+  white-space: pre-line;
+  padding: 2px;
 }
 
 .nav-button {
