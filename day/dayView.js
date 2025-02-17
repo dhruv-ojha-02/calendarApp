@@ -1,6 +1,3 @@
-let dateTitleElement = document.getElementById("dateTitleElement");
-let slotsContainer = document.getElementById("slots");
-
 import {
   events,
   addEventModal,
@@ -15,6 +12,9 @@ import {
   viewButton,
   updateCalendarView,
 } from "../config.js";
+
+let dateTitleElement = document.getElementById("dateTitleElement");
+let slotsContainer = document.getElementById("slots");
 
 viewButton.value = "day";
 

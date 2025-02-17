@@ -1,8 +1,3 @@
-let currMonth = new Date().getMonth();
-let currYear = new Date().getFullYear();
-let monthYearElement = document.getElementById("month-year");
-let datesContainer = document.getElementById("dates");
-
 import {
   events,
   addEventModal,
@@ -17,6 +12,11 @@ import {
   viewButton,
   updateCalendarView,
 } from "../config.js";
+
+let currMonth = new Date().getMonth();
+let currYear = new Date().getFullYear();
+let monthYearElement = document.getElementById("month-year");
+let datesContainer = document.getElementById("dates");
 
 viewButton.value = "month";
 

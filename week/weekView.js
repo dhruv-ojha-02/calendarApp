@@ -1,7 +1,3 @@
-let weekTitleElement = document.getElementById("weekTitleElement");
-let weekdaysContainer = document.getElementById("weekdays");
-let slotsContainer = document.getElementById("weekSlots");
-
 import {
   events,
   addEventModal,
@@ -16,6 +12,10 @@ import {
   viewButton,
   updateCalendarView,
 } from "../config.js";
+
+let weekTitleElement = document.getElementById("weekTitleElement");
+let weekdaysContainer = document.getElementById("weekdays");
+let slotsContainer = document.getElementById("weekSlots");
 
 viewButton.value = "week";
 
